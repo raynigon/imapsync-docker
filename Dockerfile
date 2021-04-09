@@ -1,6 +1,8 @@
 FROM ubuntu
 
-RUN apt install -y\
+RUN apt update &&\
+    apt upgrade -y &&\
+    apt install -y\
     libauthen-ntlm-perl\
     libcgi-pm-perl\
     libcrypt-openssl-rsa-perl\
@@ -29,14 +31,19 @@ RUN apt install -y\
     libtest-deep-perl\
     libtest-warn-perl\
     make\
-    cpanminus
+    cpanminus\
+    wget &&\
+    apt-get clean autoclean &&\
+    apt-get autoremove --yes &&\
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-RUN wget https://imapsync.lamiral.info/dist/imapsync-1.977.tgz
-RUN tar -xvf imapsync-1.977.tgz
-RUN mv imapsync-1.977 imapsync &&\
+RUN wget https://imapsync.lamiral.info/dist/imapsync-1.977.tgz &&\
+    tar -xvf imapsync-1.977.tgz &&\
+    rm imapsync-1.977.tgz &&\
+    mv imapsync-1.977 imapsync &&\
     cd imapsync &&\
     chmod +x imapsync
 WORKDIR /app/imapsync
 
-CMD [ "/app/imapsync" ]
+CMD [ "/app/imapsync/imapsync" ]
